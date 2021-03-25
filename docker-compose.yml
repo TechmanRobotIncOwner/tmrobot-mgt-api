@@ -1,0 +1,27 @@
+
+version: '3'
+services:
+  ServiceEngineCore:
+    build: .
+    image: tmrobot/robot-api:1.00
+    container_name: "robot-api"
+    network_mode: "host"
+    environment:
+      _ENVIRONMENT: "Production"
+      _RABBITMQSETTIMG: "{
+        \"IP\":\"10.1.10.13\",
+        \"Port\":5672,
+        \"UserName\":\"Test\",
+        \"Password\":\"zxc123asd456\",
+        \"VHost\":\"/\",\"Exchange\":\"Topic\",
+        \"TMRobotInfoRoute\":\"publish.queue.1\",
+        \"TMRobotVariableRoute\":\"publish.queue.2\"
+      }"
+      TZ: "Asia/Taipei"
+      _USERINFO: "[{\"UserName\": \"Admin\",\"Password\": \"123\"}]"
+    volumes:
+      - /yourfilepath:/app/Log
+
+ 
+
+  
