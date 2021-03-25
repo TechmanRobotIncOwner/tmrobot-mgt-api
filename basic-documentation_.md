@@ -28,8 +28,8 @@
     + [Get TM Robot Variable Value](#get-tm-robot-variable-value-1)
     + [Get Modbus Value](#get-modbus-value)
   * [RabbitMQ Client](#rabbitmq-client)
-  * [Socket Object Properties](#socket-object-properties)
-    + [Reponse](#reponse)
+  * [Responses Properties](#responses-properties)
+    + [Socket Reponse](#socket-reponse)
     + [ServiceActionReturn](#serviceactionreturn)
     + [TMRobotActionReturn](#tmrobotactionreturn)
     + [TMRobotInfo](#tmrobotinfo)
@@ -852,9 +852,9 @@ Windows 請至 appsetting.config 設定
 
 ---
 
-## Socket Object Properties
+## Responses Properties
 
-### Reponse
+### Socket Reponse
 
 | 參數名稱            | 參數型別 | 參數說明                                                     |
 | ------------------- | -------- | ------------------------------------------------------------ |
