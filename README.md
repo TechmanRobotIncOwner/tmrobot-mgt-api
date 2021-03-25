@@ -6,6 +6,12 @@ TM Robot Management API Basic 讓客戶可以在自己的設備管理系統、�
 
 ![image-20210204193601257](images/image-20210204193601257.png)
 
+### How to Use?
+
+安裝建置請參考文件 [user guide](https://github.com/TechmanRobotIncOwner/tmrobot-mgt-api/blob/main/basic-user-guide.md)
+
+功能說明請參考文件 [documentation](https://github.com/TechmanRobotIncOwner/tmrobot-mgt-api/blob/main/basic-documentation_.md)
+
 #### Features：
 
 1. 掌握多台手臂數據
