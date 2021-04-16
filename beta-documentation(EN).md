@@ -94,7 +94,7 @@ TM Robot Management API configuration files come with `ServiceSettings.json` env
 | RobotFilePath                    | Download Upload File Folder                                  |
 | RobotDataMonitorTime             | Data Monitoring Time (Send to client side data)              |
 | RobotDataUpdateTime              | TM Robot Data Updated Time (Update real-time data in memory) |
-| ApiService                       | API Service IP Address                                       |
+| ApiService                       | * API Service Host IP Address                                |
 | SslEnable                        | Enable SSL Certificate                                       |
 | SslpfxPath                       | SSL Certificate Path                                         |
 | SslPassword                      | SSL Certificate Password                                     |
