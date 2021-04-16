@@ -118,7 +118,7 @@ TM Robot Management API Modbus data configuration files come with `ModbusDetail.
 | #    | API TYPE  | Service Port |
 | ---- | --------- | ------------ |
 | 1    | Socket    | 9834         |
-| 2    | Socket(s) | 9830         |
+| 2    | Socket(s) | 9829         |
 | 3    | Http      | 9832         |
 | 4    | Http(s)   | 9833         |
 | 5    | gRPC      | 9831         |
