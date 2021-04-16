@@ -54,12 +54,15 @@ Supported TM Robot software version: 1.72/1.76/1.80 and above
    docker-compose up -d
    ```
 
-5. Launch the URL `http://{server_ip}:9832/HttpServerRobot/TestRobotApiConnect` for the Success as  the service of TM Robot Management API started successfully. 
+5. Launch the URL `http://{server_ip}:9832/HttpServer/TestRobotApiConnect` for the Success as  the service of TM Robot Management API started successfully. 
 
 ### Windows
 
 - Windows 10 64-bit: Pro, Enterprise, or Education (Build 16299 or later). 
-- ASP.NET Core Runtime 3.1.0 from Microsoft.
+
+- .NET Desktop Runtime 3.1.14 from Microsoft
+
+- ASP.NET Core Runtime 3.1.14 from Microsoft
 
 **Start**
 
@@ -376,10 +379,7 @@ Content:
 
 ```json
 {
-  "TMRobotNames": [
-    "TM000000",
-    "NEX613-20200518"
-  ]
+  "TMRobotIPs": ["192.168.132.70","192.168.132.200"]
 }
 ```
 **Response**
@@ -965,9 +965,9 @@ Url:/GrpcServerRobot/GetTMRobotsDetailByIP
 
 ```json
 {
-  "TMRobotNames": [
-    "TM000000",
-    "NEX613-20200518"
+  "TMRobotIps": [
+    "192.168.132.70",
+    "192.168.132.200"
   ]
 }
 ```
@@ -1349,7 +1349,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobots 
+Url:/GrpcServerRobot/GetTMRobotsDetail
 
 ```json
 {
@@ -1518,28 +1518,35 @@ Url:/GrpcServerRobot/GetTMRobotProjects
 ]
 ```
 
-### Get TM Robot Variable
+### Search TM Robot Variable
 
 Obtain the variable property information in connection. The variables include global variables and  project variables of the TM Robot in operation.
 
 #### Http(s)
 
-**Request**
-
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotVariable/{ TMRobotName }/{ProjectName}`
-
 | Name    | Required | Data Type | Description      |
 | ----------- | -------- | -------- | ------------------ |
 | TMRobotName | Yes    | string | TM Robot names((stick serial number, unique value)). |
 | ProjectName | Yes  | string | Project name |
+| VariableNames | No | string array | TM Robot variable name list. If the field is an  empty array, it returns TM  Robot's all project names. |
 
-HTTP method: `GET` `POST`
+**Request**
+
+URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotVariable/{ TMRobotName }/{ProjectName}`
+
+HTTP method: `POST`
 
 Headers
 
 ```http
 Content-Type: application/json
 Authorization: Bearer {token}
+```
+
+Content
+
+```json
+["var_a"]
 ```
 
 **Response**
@@ -1569,6 +1576,8 @@ Authorization: Bearer {token}
 | RobotActionType        | Yes      | int          | Robot action type ID. The method brings in  the value `2`.   |
 | TMRobotName            | Yes      | string       | TM Robot name                                                |
 | VariableNames          | No       | string array | Variable name list. If the field is null, an  empty array, or no field, it returns every TM  Robot in connection. |
+
+**Request**
 
 ```json
 {
@@ -1607,21 +1616,58 @@ Authorization: Bearer {token}
 }
 ```
 
-### Get TM Robot Variable Value
+#### gRPC
+
+**Arguments**
+
+| Name          | Required | Data Type    | Description                                                  |
+| ------------- | -------- | ------------ | ------------------------------------------------------------ |
+| TMRobotName   | Yes      | string       | TM Robot names((stick serial number, unique value)).         |
+| ProjectName   | Yes      | string       | Project name                                                 |
+| VariableNames | No       | string array | TM Robot variable name list. If the field is an  empty array, it returns TM  Robot's all variables. |
+
+**Request**
+
+Url:/GrpcServerRobot/GetTMRobotVariables
+
+```json
+{
+    "TMRobotName":"TM000000",
+    "ProjectName":"Test",
+    "VariableNames":["var_a"]
+}
+```
+**Response**
+
+```json
+[
+  {
+    "name": "var_a",
+    "projectName": "Test",
+    "isGlobalVariable": true,
+  }
+]
+```
+
+### Search TM Robot Variable Value
 
 Obtain one or more variable values of the TM Robot in connection. The content contains the current  and the last value.
 
 #### Http(s)
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotVariableValue/{ RobotName }/{ ProjectName }/{VariableName}`
+**Arguments**
 
-| Name         | Required | Data Type | Description                                          |
-| ------------ | -------- | --------- | ---------------------------------------------------- |
-| TMRobotName  | Yes      | string    | TM Robot names((stick serial number, unique value)). |
-| VariableName | Yes      | string    | Variable name                                        |
+| Name         | Required | Data Type    | Description                                        |
+| ------------ | -------- | ------------ | -------------------------------------------------- |
+| TMRobotName  | Yes      | string       | TM Robot names(stick serial number, unique value). |
+| VariableName | No       | string array | Variable name                                      |
+
+**Request**
+
+URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotVariablesValue/{TMRobotName}`
 
 
-Method: `GET` `POST`
+Method:  `POST`
 
 Headers
 
@@ -1630,7 +1676,13 @@ Content-Type: application/json
 Authorization: Bearer {token}
 ```
 
-Response
+Content
+
+```json
+["var_a"]
+```
+
+**Response**
 
 - Typical success response
 
@@ -1649,7 +1701,7 @@ Response
 
 #### Socket(s)
 
-Arguments
+**Arguments**
 
 | Name                   | Required | Data Type    | Description                                                  |
 | ---------------------- | -------- | ------------ | ------------------------------------------------------------ |
@@ -1658,7 +1710,9 @@ Arguments
 | TMRobotActionParameter |          | object       |                                                              |
 | RobotActionType        | Yes      | int          | Robot action type ID. The method brings in  the value `3`.   |
 | TMRobotName            | Yes      | string       | TM Robot name                                                |
-| VariableNames          | No       | string array | f the field is null, an empty array, or no field,  it returns all project variables. |
+| VariableNames          | No       | string array | Variable name list. If the field is null, an empty array, or no field,  it returns all project variables. |
+
+**Request**
 
  ```json
 {
@@ -1674,7 +1728,7 @@ Arguments
 }
  ```
 
-Response
+**Response**
 
 - Typical success response
 
@@ -1697,6 +1751,38 @@ Response
     ]
   }
 }
+```
+
+#### gRPC
+
+**Arguments**
+| Name          | Required | Data Type    | Description                                                  |
+| ------------- | -------- | ------------ | ------------------------------------------------------------ |
+| TMRobotName   | Yes      | string       | TM Robot name                                                |
+| VariableNames | No       | string array | Variable name list. If the field is an empty array,  it returns all project variables. |
+
+**Request**
+
+Url:/GrpcServerRobot/GetTMRobotVariablesValue
+
+```json
+{
+    "variableNames":["var_a"]
+}
+```
+**Response**
+
+```json
+[
+    {
+        "TMRobotName": "TM123456",
+        "ProjectName": "Test ",
+        "vType": "string",
+        "vName": "var_a",
+        "Value": "Test",
+        "PastValue": ""
+      }
+]
 ```
 
 ### Read Modbus
@@ -2817,6 +2903,8 @@ Url:/GrpcServerRobot/pullproject
 ```
 ### Download TM Robot Project from API Host
 
+User can download TM Robot project from API host into client.
+
 Required
 
 - TM Robot project must be downloaded to the API host first.
@@ -2914,9 +3002,11 @@ Url:/GrpcServerRobot/DownloadProject
 ```
 ### Push TM Robot Project to TM Robot
 
+User can upload TM Robot project from API server host into TM Robot.
+
 Required
 
-- Only the project owned by the API host can be uploaded.
+- Only the project owned by the API server host can be uploaded.
 
 #### Http(s)
 
@@ -3036,7 +3126,7 @@ Url:/GrpcServerRobot/pushproject
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/pullproject/{TMRobotName}/{projectName}`
+Url: `http://{server_ip}:9832/HttpServerRobot/UploadProject/{TMRobotName}/{projectName}`
 
 Method: `Post`
 
