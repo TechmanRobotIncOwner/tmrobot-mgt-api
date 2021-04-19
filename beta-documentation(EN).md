@@ -141,7 +141,7 @@ Use HTTP(S) as the channel to access data with the request header of the authori
 
 ## 5. Basic Functions
 
-### Get Authorization Token
+### 5.1 Get Authorization Token
 
 Obtain the API access token by the username/password defined in API Config for authentication when  accessing data with the API.
 
@@ -225,7 +225,7 @@ Content
 }
 ```
 
-### Search TM Robot Information by IP List
+### 5.2 Search TM Robot Information by IP List
 
 Obtain single or multiple TM Robot information in connection.
 
@@ -426,7 +426,7 @@ Content:
 ]
 ```
 
-### Search TM Robot Information by TM Robot Names
+### 5.3 Search TM Robot Information by TM Robot Names
 
 Obtain single or multiple TM Robot information in connection.
 
@@ -628,7 +628,7 @@ Content:
 ]
 ```
 
-### Search Custom  TM Robot Information by IP List
+### 5.4 Search Custom  TM Robot Information by IP List
 
 Obtain single or multiple TM Robot  custom information.
 
@@ -1015,7 +1015,7 @@ Url:/GrpcServerRobot/GetTMRobotsDetailByIP
 ]
 ```
 
-### Search Custom  TM Robot Information by TM Robot Names
+### 5.5 Search Custom  TM Robot Information by TM Robot Names
 
 Obtain single or multiple TM Robot  custom information.
 
@@ -1403,7 +1403,7 @@ Url:/GrpcServerRobot/GetTMRobotsDetail
 ]
 ```
 
-### Search TM Robot Project Name
+### 5.6 Search TM Robot Project Name
 
 Check and obtain the project name list of the TM Robot in connection.
 
@@ -1519,7 +1519,7 @@ Url:/GrpcServerRobot/GetTMRobotProjects
 ]
 ```
 
-### Search TM Robot Variable
+### 5.7 Search TM Robot Variable
 
 Obtain the variable property information in connection. The variables include global variables and  project variables of the TM Robot in operation.
 
@@ -1650,7 +1650,7 @@ Url:/GrpcServerRobot/GetTMRobotVariables
 ]
 ```
 
-### Search TM Robot Variable Value
+### 5.8 Search TM Robot Variable Value
 
 Obtain one or more variable values of the TM Robot in connection. The content contains the current  and the last value.
 
@@ -1786,7 +1786,7 @@ Url:/GrpcServerRobot/GetTMRobotVariablesValue
 ]
 ```
 
-### Read Modbus
+### 5.9 Read Modbus
 
 Obtain the TM Robot Modbus Address value. For TM Robot Modbus Table, refer to the respective  version of TMflow user manual.
 
@@ -1961,7 +1961,7 @@ Url:/GrpcServerRobot/ReadModbus
 }
 ```
 
-### Subscribe TM Robot Information
+### 5.10 Subscribe TM Robot Information
 
 Subscribe TM Robot information by the contents of the input arguments. When the connected TM  Robot information changes, the system actively publishes TM Robot information to subscribers. For TM  Robot information, refer to 8.4 TMRobotInfo.
 
@@ -2007,7 +2007,7 @@ Subscribe TM Robot information by the contents of the input arguments. When the 
 }
 ```
 
-### Unsubscribe TM Robot Information
+### 5.11 Unsubscribe TM Robot Information
 
 Unsubscribe TM Robot information by the contents of the input arguments.
 
@@ -2053,7 +2053,7 @@ Response
 }
 ```
 
-### Subscribe TM Robot Variable
+### 5.12 Subscribe TM Robot Variable
 
 Subscribe TM Robot variables by the contents of the input arguments. When the connected TM Robot  variables change, the system actively publishes TM Robot information to subscribers.
 
@@ -2101,7 +2101,7 @@ Subscribe TM Robot variables by the contents of the input arguments. When the co
 }
 ```
 
-### Unsubscribe TM Robot Variable
+### 5.13 Unsubscribe TM Robot Variable
 
 Unsubscribe TM Robot variables by the contents of the input arguments.
 
@@ -2153,7 +2153,7 @@ Unsubscribe TM Robot variables by the contents of the input arguments.
 
 ## 6. Advance Functions
 
-### Get API Client Control of TM Robot
+### 6.1 Get API Client Control of TM Robot
 
 The logged-in user gets  API client control of TM Robot. Ensure that a single TM Robot can only be controlled by one API Client at the same time.
 
@@ -2283,7 +2283,7 @@ Url:/GrpcServerRobot/GetTMRobotControl
       }
 }
 ```
-### Release API Client Control of TM Robot
+### 6.2 Release API Client Control of TM Robot
 
 The logged-in user releases API client control of TM Robot.
 
@@ -2408,7 +2408,7 @@ Url:/GrpcServerRobot/ReleaseTMRobotControl
       }
 }
 ```
-### Change TM Robot Default Project
+### 6.3 Change TM Robot Default Project
 
 Required
 
@@ -2537,7 +2537,7 @@ Url:/GrpcServerRobot/ChangeRobotDefaultProject
       }
 }
 ```
-### Change TM Robot Stick Execution
+### 6.4 Change TM Robot Stick Execution
 
 Required
 
@@ -2672,7 +2672,7 @@ Url:/GrpcServerRobot/ChangeRobotExecution
       }
 }
 ```
-### Set TM Robot Variable Value
+### 6.5 Set TM Robot Variable Value
 
 Required
 
@@ -2785,7 +2785,7 @@ Url:/GrpcServerRobot/SetRobotVariable
       }
 }
 ```
-### Pull TM Robot Project into API Host
+### 6.6 Pull TM Robot Project into API Host
 
 Default TM Robot project will be download to the folder:  `apiserver/Files/(TMRobotName)`, the name of the Files (default) folder can be changed in the Settings.json configuration.
 
@@ -2902,7 +2902,7 @@ Url:/GrpcServerRobot/pullproject
       }
 }
 ```
-### Download TM Robot Project from API Host
+### 6.7 Download TM Robot Project from API Host
 
 User can download TM Robot project from API host into client.
 
@@ -3001,7 +3001,7 @@ Url:/GrpcServerRobot/DownloadProject
   }
 ]
 ```
-### Push TM Robot Project to TM Robot
+### 6.8 Push TM Robot Project to TM Robot
 
 User can upload TM Robot project from API server host into TM Robot.
 
@@ -3115,7 +3115,7 @@ Url:/GrpcServerRobot/pushproject
       }
 }
 ```
-### Upload TM Robot Project to API Host
+### 6.9 Upload TM Robot Project to API Host
 #### Http(s)
 
 **Arguments**
