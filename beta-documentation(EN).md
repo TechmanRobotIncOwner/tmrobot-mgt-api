@@ -1,4 +1,4 @@
-Robot Management API Documentation (Beta)
+# Robot Management API Documentation (Beta)
 
 ## 1. Overview
 
@@ -94,6 +94,25 @@ Supported TM Robot software version: 1.72/1.76/1.80 and above
 ### 3.3 Setting file field description
 
 #### 3.3.1 _start.bat (Windows)
+
+| Column Name                  | Description                                                  |
+| ---------------------------- | ------------------------------------------------------------ |
+| ASPNETCORE_ENVIRONMENT       | Operating environment (fixed as Production)                  |
+| SERVICE_HOST_NAME            | Service host name or IP                                      |
+| SERVICE_SOCKETS_PORT         | Sockets listen port                                          |
+| SERVICE_HTTPS_PORT           | HTTPs listen port                                            |
+| SERVICE_GRPC_PORT            | GRPC listen port                                             |
+| SERVICE_CONFIG               | service-config.json file path                                |
+| MODBUS_CONFIG                | modbus-config.json file path                                 |
+| ROBOTDATAMONITORTIME         | Set the number of seconds for the subscription mechanism to push the frequency |
+| ROBOTDATAUPDATETIME          | Set the number of seconds to update the arm data             |
+| SERVICE_CERTIFICATE_PATH     | SSL certificate path                                         |
+| SERVICE_CERTIFICATE_PASSWORD | SSL certificate path                                         |
+| LOGROOTPATH                  | api log storage location                                     |
+| RobotProjectFilePath         | TM Robot project storage location                            |
+| RobotLogFilePath             | TM Robot log storage location                                |
+
+#### 3.3.2 docker-compose.yml (Linux)
 
 | Column Name                  | Description                                                  |
 | ---------------------------- | ------------------------------------------------------------ |
@@ -1821,7 +1840,7 @@ Obtain the TM Robot Modbus Address value. For TM Robot Modbus Table, refer to th
 
 | Name       | Required | Data Type | Description |
 | -------------- | -------- | -------- | ------------ |
-| ModbusFunction        | Yes    | int      | Modbus Read Function Code, refer to [Field Specification](#modbusfunction). |
+| ModbusFunction        | Yes    | int      | Modbus Read Function Code, refer to [Appendix B](#modbusfunction). |
 | DeviceIP              | Yes    | string   | TM Robot or other device IP address. |
 | Port                  | Yes    | int      | Modbus port 502          |
 | SlaveAddress          | Yes    | int      | Modbus slave id         |
@@ -1878,7 +1897,7 @@ Content
 | Token                 | Yes      | string    | API access token                                             |
 | ActionTarget          | Yes      | int       | Socket command target in effect. Use `2` for the  target as Modbus. |
 | ModbusActionParameter |          | object    |                                                              |
-| ModbusFunction        | Yes      | int       | Refer to 11. Field Specification for Modbus  function codes. |
+| ModbusFunction        | Yes      | int       | Refer to 11. Appendix B for Modbus  function codes.          |
 | DeviceIP              | Yes      | string    | Device IP address                                            |
 | Port                  | Yes      | int       | Modbus port 502                                              |
 | SlaveAddress          | Yes      | int       | Modbus slave id                                              |
@@ -1942,7 +1961,7 @@ Content
 
 | Name           | Required | Data Type | Description                                                  |
 | -------------- | -------- | --------- | ------------------------------------------------------------ |
-| ModbusFunction | Yes      | int       | Modbus Read Function Code, refer to [Field Specification](#modbusfunction). |
+| ModbusFunction | Yes      | int       | Modbus Read Function Code, refer to [Appendix B](#modbusfunction). |
 | DeviceIP       | Yes      | string    | TM Robot or other device IP address.                         |
 | Port           | Yes      | int       | Modbus port 502                                              |
 | SlaveAddress   | Yes      | int       | Modbus slave id                                              |
@@ -2576,7 +2595,7 @@ Required
 
 | Name                        | Required | Data Type  | Description                                                  |
 | --------------------------- | -------- | ---------- | ------------------------------------------------------------ |
-| TMRobotName:TMRobotExcution | Yes      | dictionary | TM Robot name correspond to execution code(refer to Field Specification). |
+| TMRobotName:TMRobotExcution | Yes      | dictionary | TM Robot name correspond to execution code(refer to Appendix B). |
 
 **Request**
 
@@ -2623,7 +2642,7 @@ Content
 | ActionTarget                | Yes      | int        | Socket command target in effect. Use `1` for the  target as TM Robot. |
 | TMRobotActionParameter      |          | object     |                                                              |
 | RobotActionType             | Yes      | int        | Robot action type ID. The method brings in the  value `11`.  |
-| TMRobotName:TMRobotExcution | Yes      | dictionary | TM Robot name correspond to execution code(refer to Field Specification). |
+| TMRobotName:TMRobotExcution | Yes      | dictionary | TM Robot name correspond to execution code(refer to Appendix B). |
 **Request**
 ```json
 {
@@ -2668,7 +2687,7 @@ Content
 
 | Name                        | Required | Data Type  | Description                                                  |
 | --------------------------- | -------- | ---------- | ------------------------------------------------------------ |
-| TMRobotName:TMRobotExcution | Yes      | dictionary | TM Robot name correspond to execution code(refer to Field Specification). |
+| TMRobotName:TMRobotExcution | Yes      | dictionary | TM Robot name correspond to execution code(refer to Appendix B). |
 
 **Request**
 
@@ -2812,7 +2831,7 @@ Function Name: /GrpcServerRobot/SetRobotVariable
 ```
 ### 6.6 Pull TM Robot Project into API Host
 
-Default TM Robot project will be download to the folder:  `apiserver/Files/`, 一個專案名稱只會保留一份檔案, the name of the Files (default) folder can be changed in the Settings.json configuration.
+Default TM Robot project will be download to the folder:  `apiserver/Files/`, only one file will be kept for a project name, the name of the Files (default) folder can be changed in the 3.3.1 _start.bat (Windows) / 3.3.2 docker-compose.yml (Linux) configuration.
 
 Required
 
@@ -3353,23 +3372,23 @@ Function Name: /GrpcServerRobot/SendListenNodeString
 | ------------------- | --------- | ------------------------------------------------------------ |
 | Success             | bool      | Result of the successful request                             |
 | Message             | string    | Message content of the failed request. Empty for the successful  request. |
-| ActionTarget        | int       | Socket API Method target in effect. 請參考 [File Specification](#actiontarget) |
+| ActionTarget        | int       | Socket API Method target in effect.  Refer to Appendix B.    |
 | ServiceActionReturn | object    | Service action object returned                               |
 | TMRobotActionReturn | object    | Robot action object returned                                 |
 | ModbusActionReturn  | object    | Modbus action object returned                                |
 
 ### ServiceActionReturn
 
-| Name              | Data Type | Description                                                  |
-| ----------------- | --------- | ------------------------------------------------------------ |
-| ServiceActionType | string    | Service action type.，請參考 [File Specification](#serviceactiontype) |
-| Token             | string    | API access token                                             |
+| Name              | Data Type | Description                                |
+| ----------------- | --------- | ------------------------------------------ |
+| ServiceActionType | string    | Service action type.  Refer to Appendix B. |
+| Token             | string    | API access token                           |
 
 ### TMRobotActionReturn
 
 | Name              | Data Type | Description         |
 | --------------------- | ------------ | ------------------------- |
-| RobotActionType       | int          | Socket API Robot function in effect. 請參考 [File Specification](#robotactiontype) |
+| RobotActionType       | int          | Socket API Robot function in effect. Refer to Appendix B. |
 | TMRobotInfos          | array object | TM Robot information object list                             |
 | TMRobotProjects | array object | TM Robot project object list |
 | TMRobotVariables | array object | TM Robot variable property object list |
