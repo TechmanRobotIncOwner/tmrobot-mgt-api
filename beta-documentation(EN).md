@@ -1,8 +1,8 @@
-# Robot Management API Documentation (Beta)
+Robot Management API Documentation (Beta)
 
 ## 1. Overview
 
-TM Robot Management API is an API service for system developers to integrate TM Robot. It supports  communication protocols of TCP/IP, HTTP, and RabbitMQ with the complement API methods such as  Socket API, WebAPI, RabbitMQ Client, and gRPC. 
+TM Robot Management API is an API service for system developers to integrate TM Robot. It supports  communication protocols of TCP/IP, HTTPS, and RabbitMQ with the complement API methods such as  Socket API, WebAPI, RabbitMQ Client, and gRPC. 
 
 For utilizations of the TM Robot data in user applications, users can  make multiple connections by the available multi-client connection of basic functions.
 
@@ -16,9 +16,9 @@ Supported TM Robot software version: 1.72/1.76/1.80 and above
 
 - Turn on the Modbus function
 
-- Option and limitation
+- Functional limitations:
 
-  To do this using the Robot Management API: project list, variable manifest, VarSync variable delivery, project upload/download, it cannot be shared with TMmanager software. Launch HMI TMmanager function and complete the settings.
+  The functions of the projects, variables, and files described in chapters 5.6, 5.7, 6.5, 6.6, and 6.8 need to be configured with TMmanager to access specific IP and communication ports.
 
   | IP Address                      | Port |
   | ------------------------------- | ---- |
@@ -28,115 +28,151 @@ Supported TM Robot software version: 1.72/1.76/1.80 and above
 
 - Static IP address
 
-### Linux
+- [Download](https://tmedge.file.core.windows.net/management/TMRobot.Management-win-x64-v1.01.3000.zip?sv=2020-02-10&ss=f&srt=o&sp=rl&se=2021-12-31T14:32:06Z&st=2021-03-20T06:32:06Z&spr=https&sig=ZZhlwva6goJvbuJevB3RJ5CdA2RaetzVT%2BezIicwCaM%3D) the TM Robot Management API program and unzip it to get the following files:
 
-> IMPORTANT: This is beta version so that please contact teachman team for `docker-compose.yml` if needed.
+  ![image-20210610163520174](images/image-20210610163520174.png)
 
-- (Preferred) Ubuntu Bionic 18.04 (LTS) 
-- Install Docker  
+- Configuration files description:
+
+  | File Name           | Description                                                  | OS               |
+  | ------------------- | ------------------------------------------------------------ | ---------------- |
+  | _start.bat          | Define and enable the environment variable settings required by the service | Windows          |
+  | docker-compose.yml  | Define the service container                                 | Linux            |
+  | service-config.json | Service basic profile                                        | Windows / Linux  |
+  | modbus-config.json  | Used in 5.4 and 5.5 to determine which Modbus group data the customized arm information should respond to | Windows / Linux  |
+  | edge-ca.crt         | CA certificate, you can replace the company's CA certificate by yourself | Windows / Linux  |
+  | management.pfx      | PFX certificate, you can replace the company’s PFX certificate by yourself | Windows / Linux  |
+  | Protos              | Proto file for gRPC Client development                       | Windows /  Linux |
+
+   
+
+### 3.1 Linux
+
+- (Preferred) Ubuntu Bionic 18.04 / 20.04 (LTS) 
+- Install Docker
 - Install Docker Compose
-
-**Start via Docker**
-
-1. Open terminal and paste the command as below to create the service folder.
-
-   ```bash
-   mkdir robot-management-api
-   ```
-
-2. Paste the file `docker-compose.yml` into `robot-management-api` folder.
-
-3. Refers to  [ServiceSettings](#servicesettings.json) and [ModbusDetail](#modbusdetail.json) column description and customize `docker-compose.yml`. 
-
-4. Open terminal and change the directory to the folder `robot-management-api` and run the command as below.
-
-   ```bash
-   docker-compose up -d
-   ```
-
-5. Launch the URL `http://{server_ip}:9832/HttpServer/TestRobotApiConnect` for the Success as  the service of TM Robot Management API started successfully. 
-
-### Windows
-
-- Windows 10 64-bit: Pro, Enterprise, or Education (Build 16299 or later). 
-
-- .NET Desktop Runtime 3.1.14 from Microsoft
-
-- ASP.NET Core Runtime 3.1.14 from Microsoft
 
 **Start**
 
-1. Download TM Robot Management API.
-2. Change directory to RobotManagementAPI.
-3. Customize configuration files and refers to [ServiceSettings](#servicesettings.json) and [ModbusDetail](#modbusdetail.json)
-   1. `RobotManagementAPI\Settings\ServiceSettings.json`
-   2. `RobotManagementAPI\Settings\ModbusSetting.json`
-4. Execute TM Robot Management API service.
-5. Launch the URL `http://{server_ip}:9832/HttpServer/TestRobotApiConnect` for `Connection true` as  the service of TM Robot Management API started successfully.
+1. Open the unzipped TM Robot Management API folder
 
-### ServiceSettings.json
+2. Set the following configuration files:
 
-TM Robot Management API configuration files come with `ServiceSettings.json` environment variables. The column descriptions are as follows:
+   - docker-compose.yml, please refer to 3.3.2 for the field.
+   - service-config.json, please refer to 3.3.3.
+   - modbus-config.json, please refer to 3.3.4 for the field.
 
-| Column Name                      | Description                                                  |
-| -------------------------------- | ------------------------------------------------------------ |
-| MQSetting.IP                     | Rabbit MQ Server IP                                          |
-| MQSetting.Port                   | Rabbit MQ Server Port                                        |
-| MQSetting.UserName               | Rabbit MQ Server UserName                                    |
-| MQSetting.Password               | Rabbit MQ Server Password                                    |
-| MQSetting.VHost                  | Rabbit MQ Server Virtual Host Name                           |
-| MQSetting.Exchange               | Rabbit MQ Server Exchange Name                               |
-| MQSetting.TMRobotInfoRoute       | Rabbit MQ Server Routing Key TM Robot Information            |
-| MQSetting.TMRobotVariableRoute   | Rabbit MQ Server Routing Key TM Robot Variable Value         |
-| MQSetting.TMRobotInfoDetailRoute | Rabbit MQ Server Routing Key TM Robot Detail Information     |
-| USERINFO.UserName                | Robot API User Name (customize)                              |
-| USERINFO.Password                | Robot API User Password (customize)                          |
-| RobotFilePath                    | Download Upload File Folder                                  |
-| RobotDataMonitorTime             | Data Monitoring Time (Send to client side data)              |
-| RobotDataUpdateTime              | TM Robot Data Updated Time (Update real-time data in memory) |
-| ApiService                       | * API Service Host IP Address                                |
-| SslEnable                        | Enable SSL Certificate                                       |
-| SslpfxPath                       | SSL Certificate Path                                         |
-| SslPassword                      | SSL Certificate Password                                     |
+3. Open the terminal and execute the command: `docker-compose up -d `under the unzipped TM Robot Management API folder.
+
+4. Open the URL `https://{server_ip}:9833/HttpServer/TestRobotApiConnect`
+
+    Get Success means the TM Robot Management API service started successfully.
+   Note: Please replace it with SERVICE_HOST_NAME in 3.3.2 docker-compose.yml (Linux).
+
+### 3.2 Windows
+
+- Windows 10 64-bit: Pro, Enterprise, or Education (Build 16299 or later). 
 
 
+**Start**
 
-### ModbusDetail.json
+1. Open the unzipped TM Robot Management API folder
 
-TM Robot Management API Modbus data configuration files come with `ModbusDetail.json` environment variables. The column descriptions are as follows:
+2. Set the following configuration files:
 
-| Column Name   | Description                      |
-| ------------- | -------------------------------- |
-| startaddress  | Modbus Register Starting Address |
-| enable        | Enable or not                    |
-| numberofpoint | The Number of Modbus Column      |
-| funcitoncode  | Modbus Function Code             |
-| datatype      | Data Type                        |
+   - _start.bat, please refer to 3.3.1 for the field.
+   - service-config.json, please refer to 3.3.3.
+   - modbus-config.json, please refer to 3.3.4 for the field.
+
+3. Open the terminal and execute the command: `docker-compose up -d `under the unzipped TM Robot Management API folder.
+
+4. Open the URL `https://{server_ip}:9833/HttpServer/TestRobotApiConnect`
+
+    Get Success means the TM Robot Management API service started successfully.
+   Note: Please replace it with SERVICE_HOST_NAME in 3.3.2 docker-compose.yml (Linux).
+
+### 3.3 Setting file field description
+
+#### 3.3.1 _start.bat (Windows)
+
+| Column Name                  | Description                                                  |
+| ---------------------------- | ------------------------------------------------------------ |
+| ASPNETCORE_ENVIRONMENT       | Operating environment (fixed as Production)                  |
+| SERVICE_HOST_NAME            | Service host name or IP                                      |
+| SERVICE_SOCKETS_PORT         | Sockets listen port                                          |
+| SERVICE_HTTPS_PORT           | HTTPs listen port                                            |
+| SERVICE_GRPC_PORT            | GRPC listen port                                             |
+| SERVICE_CONFIG               | service-config.json file path                                |
+| MODBUS_CONFIG                | modbus-config.json file path                                 |
+| ROBOTDATAMONITORTIME         | Set the number of seconds for the subscription mechanism to push the frequency |
+| ROBOTDATAUPDATETIME          | Set the number of seconds to update the arm data             |
+| SERVICE_CERTIFICATE_PATH     | SSL certificate path                                         |
+| SERVICE_CERTIFICATE_PASSWORD | SSL certificate path                                         |
+| LOGROOTPATH                  | api log storage location                                     |
+| RobotProjectFilePath         | TM Robot project storage location                            |
+| RobotLogFilePath             | TM Robot log storage location                                |
+
+#### 3.3.3 service-config.json
+
+Please refer to the following `service-config.tmp.json` to configure your `service-config.json`.
+The environment variables, field names and corresponding descriptions of TM Robot Management API service configuration are as follows:
+
+| Column Name                      | Description                                              |
+| -------------------------------- | -------------------------------------------------------- |
+| MQSetting.IP                     | Rabbit MQ Server IP                                      |
+| MQSetting.Port                   | Rabbit MQ Server Port                                    |
+| MQSetting.UserName               | Rabbit MQ Server UserName                                |
+| MQSetting.Password               | Rabbit MQ Server Password                                |
+| MQSetting.VHost                  | Rabbit MQ Server Virtual Host Name                       |
+| MQSetting.Exchange               | Rabbit MQ Server Exchange Name                           |
+| MQSetting.TMRobotInfoRoute       | Rabbit MQ Server Routing Key TM Robot Information        |
+| MQSetting.TMRobotVariableRoute   | Rabbit MQ Server Routing Key TM Robot Variable Value     |
+| MQSetting.TMRobotInfoDetailRoute | Rabbit MQ Server Routing Key TM Robot Detail Information |
+| USERINFO.UserName                | Robot API User Name (customize)                          |
+| USERINFO.Password                | Robot API User Password (customize)                      |
+| ApiService                       | API Service IP Address                                   |
+
+#### 3.3.4 modbus-config.json
+
+TM Robot Management API Modbus data configuration file, field names and corresponding descriptions are as follows:
+
+| Column Name                         | Description                                                  |
+| ----------------------------------- | ------------------------------------------------------------ |
+| ModbusConfiguration                 | Modbus configuration settings                                |
+| Enable                              | Whether to enable Modbus configuration settings              |
+| RobotStatus2Addr, ControlBoxDIAddr… | The group name of the corresponding arm Modbus Table (no need to modify) |
+| modbusslaveid                       | Modbus slave id (no need to modify)                          |
+| startaddress                        | Modbus Register Starting Address (no need to modify)         |
+| enable                              | Whether to enable this Modbus group                          |
+| numberofpoint                       | The Number of Modbus Column (no need to modify)              |
+| funcitoncode                        | Modbus Function Code (no need to modify)                     |
+| datatype                            | Data Type (no need to modify)                                |
 
 ## 4. API Considerations
 
-| #    | API TYPE  | Service Port |
-| ---- | --------- | ------------ |
-| 1    | Socket    | 9834         |
-| 2    | Socket(s) | 9829         |
-| 3    | Http      | 9832         |
-| 4    | Http(s)   | 9833         |
-| 5    | gRPC      | 9831         |
+| #    | API TYPE | Service Port |
+| ---- | -------- | ------------ |
+| 1    | sockets  | 9829         |
+| 2    | https    | 9833         |
+| 3    | gRPC     | 9831         |
 
-### Socket(s) API
+### 4.1 Sockets API
 
-Use the TCP/IP Socket as a channel to access data with the data format in JSON for transmission. EOL  (end of line) is `\n`.
+Access and send JSON data with encrypted Socket. The EOL (end of line) way is `\n`.
 
-### Http(s) Web API
+### 4.2 Https Web API
 
-Use HTTP(S) as the channel to access data with the request header of the authorization access token. Go by  the URL along with the arguments in JSON format to query the respective TM Robot data.
+Base url: https://{service_ip}:9833/ 
 
-### gRPC API
+Obtain the data with the access token request header by HTTPS. Please use the URL with JSON parameter to query the data of individual TM Robot.
 
-### RabbitMQ Client
+### 4.3 gRPC API
 
-- Use docker-compose.yml to configure in Linux.
-- Use `ServiceSettings.json` configure in Windows.
+Address: https://{service_ip}:9831/
+
+### 4.4 RabbitMQ Client
+
+Configure according to 3.3.3 service-config.json.
 
 
 ## 5. Basic Functions
@@ -145,7 +181,7 @@ Use HTTP(S) as the channel to access data with the request header of the authori
 
 Obtain the API access token by the username/password defined in API Config for authentication when  accessing data with the API.
 
-#### Http(s)
+#### 5.1.1 https
 
 **Arguments**
 
@@ -157,7 +193,7 @@ Obtain the API access token by the username/password defined in API Config for a
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServer/GetToken`
+URL Path: `/HttpServer/GetToken`
 
 Method: `POST`
 
@@ -183,7 +219,7 @@ Content
 }
 ```
 
-#### Socket(s)
+#### 5.1.2 Sockets
 
 **Arguments**
 
@@ -229,7 +265,7 @@ Content
 
 Obtain single or multiple TM Robot information in connection.
 
-#### Http(s)
+#### 5.2.1 https
 
 **Arguments**
 
@@ -239,7 +275,7 @@ Obtain single or multiple TM Robot information in connection.
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotsByIP`
+URL Path: `/HttpServerRobot/GetTMRobotsByIP`
 
 Method: `POST`
 
@@ -302,7 +338,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.2.2 sockets
 
 **Arguments**
 
@@ -361,22 +397,17 @@ Content
 }
 ```
 
-#### grpc
+#### 5.2.3 grpc
 
 **Arguments**
+
 | Name       | Required | Data Type    | Description                                                  |
 | ---------- | -------- | ------------ | ------------------------------------------------------------ |
 | tmrobotips | No       | string array | TM Robot IP address list. If the field is an  empty array, it returns every TM  Robot in connection. |
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotsByIP 
-
-ContentType: json 
-
-Method: Post 
-
-Content: 
+Function Name: /GrpcServerRobot/GetTMRobotsByIP 
 
 ```json
 {
@@ -430,7 +461,7 @@ Content:
 
 Obtain single or multiple TM Robot information in connection.
 
-#### Http(s)
+#### 5.3.1 https
 
 **Arguments**
 
@@ -440,7 +471,7 @@ Obtain single or multiple TM Robot information in connection.
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobots`
+URL Path: `/HttpServerRobot/GetTMRobots`
 
 Method: `POST`
 
@@ -500,7 +531,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.3.2 sockets
 
 **Arguments**
 
@@ -558,7 +589,7 @@ Content
 }
 ```
 
-#### grpc
+#### 5.3.3 grpc
 
 **Arguments**
 
@@ -568,13 +599,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobots 
-
-ContentType: json 
-
-Method: Post 
-
-Content: 
+Function Name: /GrpcServerRobot/GetTMRobots 
 
 ```json
 {
@@ -632,9 +657,9 @@ Content:
 
 Obtain single or multiple TM Robot  custom information.
 
-> Custom information follow settings' configuration
+Custom information follow 3.3.4 modbus-config.json configuration
 
-#### Http(s)
+#### 5.4.1 https
 
 **Arguments**
 
@@ -644,7 +669,7 @@ Obtain single or multiple TM Robot  custom information.
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotsDetailByIP`
+URL Path: `/HttpServerRobot/GetTMRobotsDetailByIP`
 
 Headers
 
@@ -791,7 +816,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.4.2 sockets
 
 **Arguments**
 
@@ -953,7 +978,7 @@ Content
 }
 ```
 
-#### gRPC
+#### 5.4.3 grpc
 
 **Arguments**
 | Name       | Required | Data Type    | Description                                                  |
@@ -962,7 +987,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotsDetailByIP 
+Function Name:/GrpcServerRobot/GetTMRobotsDetailByIP 
 
 ```json
 {
@@ -1019,9 +1044,9 @@ Url:/GrpcServerRobot/GetTMRobotsDetailByIP
 
 Obtain single or multiple TM Robot  custom information.
 
-> Custom information follow settings' configuration
+Custom information follow 3.3.4 modbus-config.json configuration
 
-#### Http(s)
+#### 5.5.1 https
 
 **Arguments**
 
@@ -1031,7 +1056,7 @@ Obtain single or multiple TM Robot  custom information.
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotsDetail`
+URL Path: `/HttpServerRobot/GetTMRobotsDetail`
 
 Method: `POST`
 
@@ -1178,7 +1203,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.5.2 sockets
 
 **Arguments**
 
@@ -1340,7 +1365,7 @@ Content
 }
 ```
 
-#### gRPC
+#### 5.5.3 grpc
 
 **Arguments**
 
@@ -1350,7 +1375,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotsDetail
+Function Name:/GrpcServerRobot/GetTMRobotsDetail
 
 ```json
 {
@@ -1407,7 +1432,7 @@ Url:/GrpcServerRobot/GetTMRobotsDetail
 
 Check and obtain the project name list of the TM Robot in connection.
 
-#### Http(s)
+#### 5.6.1 https
 
 **Arguments**
 
@@ -1418,7 +1443,7 @@ Check and obtain the project name list of the TM Robot in connection.
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotProjects/{TMRobotName}`
+URL Path: `/HttpServerRobot/GetTMRobotProjects/{TMRobotName}`
 
 Method: `POST`
 
@@ -1439,7 +1464,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.6.2 sockets
 
 **Arguments**
 
@@ -1491,7 +1516,7 @@ Content
 }
 ```
 
-#### gRPC
+#### 5.6.3 grpc
 
 **Arguments**
 
@@ -1502,7 +1527,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotProjects
+Function Name:/GrpcServerRobot/GetTMRobotProjects
 
 ```json
 {
@@ -1523,7 +1548,7 @@ Url:/GrpcServerRobot/GetTMRobotProjects
 
 Obtain the variable property information in connection. The variables include global variables and  project variables of the TM Robot in operation.
 
-#### Http(s)
+#### 5.7.1 https
 
 | Name    | Required | Data Type | Description      |
 | ----------- | -------- | -------- | ------------------ |
@@ -1533,7 +1558,7 @@ Obtain the variable property information in connection. The variables include gl
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotVariable/{ TMRobotName }/{ProjectName}`
+URL Path: `/HttpServerRobot/GetTMRobotVariable/{ TMRobotName }/{ProjectName}`
 
 HTTP method: `POST`
 
@@ -1565,7 +1590,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.7.2 sockets
 
 **Arguments**
 
@@ -1617,7 +1642,7 @@ Content
 }
 ```
 
-#### gRPC
+#### 5.7.3 grpc
 
 **Arguments**
 
@@ -1629,7 +1654,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotVariables
+Function Name: /GrpcServerRobot/GetTMRobotVariables
 
 ```json
 {
@@ -1654,7 +1679,7 @@ Url:/GrpcServerRobot/GetTMRobotVariables
 
 Obtain one or more variable values of the TM Robot in connection. The content contains the current  and the last value.
 
-#### Http(s)
+#### 5.8.1 https
 
 **Arguments**
 
@@ -1665,7 +1690,7 @@ Obtain one or more variable values of the TM Robot in connection. The content co
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotVariablesValue/{TMRobotName}`
+URL Path: `/HttpServerRobot/GetTMRobotVariablesValue/{TMRobotName}`
 
 
 Method:  `POST`
@@ -1700,7 +1725,7 @@ Content
 ]
 ```
 
-#### Socket(s)
+#### 5.8.2 sockets
 
 **Arguments**
 
@@ -1754,7 +1779,7 @@ Content
 }
 ```
 
-#### gRPC
+#### 5.8.3 grpc
 
 **Arguments**
 | Name          | Required | Data Type    | Description                                                  |
@@ -1764,7 +1789,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotVariablesValue
+Function Name: /GrpcServerRobot/GetTMRobotVariablesValue
 
 ```json
 {
@@ -1790,7 +1815,7 @@ Url:/GrpcServerRobot/GetTMRobotVariablesValue
 
 Obtain the TM Robot Modbus Address value. For TM Robot Modbus Table, refer to the respective  version of TMflow user manual.
 
-#### Http(s)
+#### 5.9.1 https
 
 **Arguments**
 
@@ -1805,7 +1830,7 @@ Obtain the TM Robot Modbus Address value. For TM Robot Modbus Table, refer to th
 
 **Request**
 
-URL: `http://{server_ip}:9832/HttpServerModbus/ReadModbus`
+URL Path: `/HttpServerModbus/ReadModbus`
 
 
 Method: `POST`
@@ -1844,7 +1869,7 @@ Content
 [15547,62248,33374]
 ```
 
-#### Socket(s)
+#### 5.9.2 sockets
 
 **Arguments**
 
@@ -1911,7 +1936,7 @@ Content
 }
 ```
 
-#### grpc
+#### 5.9.3 grpc
 
 **Arguments**
 
@@ -1926,7 +1951,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/ReadModbus
+Function Name:/GrpcServerRobot/ReadModbus
 
 ```json
 {
@@ -1965,7 +1990,7 @@ Url:/GrpcServerRobot/ReadModbus
 
 Subscribe TM Robot information by the contents of the input arguments. When the connected TM  Robot information changes, the system actively publishes TM Robot information to subscribers. For TM  Robot information, refer to 8.4 TMRobotInfo.
 
-#### Socket(s)
+#### 5.10.1 sockets
 
 **Arguments**
 
@@ -2011,7 +2036,7 @@ Subscribe TM Robot information by the contents of the input arguments. When the 
 
 Unsubscribe TM Robot information by the contents of the input arguments.
 
-#### Socket(s)
+#### 5.11.1 sockets
 
 **Arguments**
 
@@ -2057,7 +2082,7 @@ Response
 
 Subscribe TM Robot variables by the contents of the input arguments. When the connected TM Robot  variables change, the system actively publishes TM Robot information to subscribers.
 
-#### Socket(s) 
+#### 5.12.1 sockets
 
 **Arguments**
 
@@ -2105,7 +2130,7 @@ Subscribe TM Robot variables by the contents of the input arguments. When the co
 
 Unsubscribe TM Robot variables by the contents of the input arguments.
 
-#### Socket(s)
+#### 5.13.1 sockets
 
 **Arguments**
 
@@ -2157,7 +2182,7 @@ Unsubscribe TM Robot variables by the contents of the input arguments.
 
 The logged-in user gets  API client control of TM Robot. Ensure that a single TM Robot can only be controlled by one API Client at the same time.
 
-#### Http(s)
+#### 6.1.1 https
 
 **Arguments**
 
@@ -2167,7 +2192,7 @@ The logged-in user gets  API client control of TM Robot. Ensure that a single TM
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/GetTMRobotControl`
+URL Path: `/HttpServerRobot/GetTMRobotControl`
 
 Method: `Post`
 
@@ -2198,7 +2223,7 @@ Content:
       }
 }
 ```
-#### Socket(s)
+#### 6.1.2 sockets
 
 **Arguments**
 
@@ -2247,7 +2272,7 @@ Content:
   }
 }
 ```
-#### gRPC
+#### 6.1.3 grpc
 
 **Arguments**
 
@@ -2257,7 +2282,7 @@ Content:
 
 **Request**
 
-Url:/GrpcServerRobot/GetTMRobotControl
+Function Name: /GrpcServerRobot/GetTMRobotControl
 
 ```json
 {
@@ -2287,7 +2312,7 @@ Url:/GrpcServerRobot/GetTMRobotControl
 
 The logged-in user releases API client control of TM Robot.
 
-#### Http(s)
+#### 6.2.1 https
 
 **Arguments**
 
@@ -2297,7 +2322,7 @@ The logged-in user releases API client control of TM Robot.
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/ReleaseTMRobotControl`
+URL Path: `/HttpServerRobot/ReleaseTMRobotControl`
 
 Method: `Post`
 
@@ -2328,7 +2353,7 @@ Content:
   }
 }
 ```
-#### Socket(s)
+#### 6.2.2 sockets
 
 **Arguments**
 
@@ -2373,7 +2398,7 @@ Content:
   }
 }
 ```
-#### gRPC
+#### 6.2.3 grpc
 
 **Arguments**
 
@@ -2383,7 +2408,7 @@ Content:
 
 **Request**
 
-Url:/GrpcServerRobot/ReleaseTMRobotControl
+Function Name: /GrpcServerRobot/ReleaseTMRobotControl
 
 ```json
 {
@@ -2415,7 +2440,7 @@ Required
 - Get API Client Control of TM Robot.
 - TM Robot must be in `Auto mode`.
 
-#### Http(s)
+#### 6.3.1 https
 
 **Arguments**
 
@@ -2458,7 +2483,7 @@ Content:
   }
 }
 ```
-#### Socket(s)
+#### 6.3.2 sockets
 
 **Arguments**
 
@@ -2502,7 +2527,7 @@ Content:
   }
 }
 ```
-#### gRPC
+#### 6.3.3 grpc
 
 **Arguments**
 
@@ -2512,7 +2537,7 @@ Content:
 
 **Request**
 
-Url:/GrpcServerRobot/ChangeRobotDefaultProject
+Function Name: /GrpcServerRobot/ChangeRobotDefaultProject
 
 ```json
 {
@@ -2545,7 +2570,7 @@ Required
 - TM Robot HMI version 1.72, 1.76  must be in `Auto mode`.
 - TM Robot HMI version 1.80, 1.82  must be in `AutoRemote mode`.
 
-#### Http(s)
+#### 6.4.1 https
 
 **Arguments**
 
@@ -2588,7 +2613,7 @@ Content
 }
 ```
 
-#### Socket(s)
+#### 6.4.2 sockets
 
 **Arguments**
 
@@ -2637,7 +2662,7 @@ Content
 }
 ```
 
-#### gRPC
+#### 6.4.3 grpc
 
 **Arguments**
 
@@ -2647,7 +2672,7 @@ Content
 
 **Request**
 
-Url:/GrpcServerRobot/ChangeRobotExecution
+Function Name: /GrpcServerRobot/ChangeRobotExecution
 
 ```json
 {
@@ -2678,7 +2703,7 @@ Required
 
 - Get API Client Control of TM Robot.
 
-#### Http(s)
+#### 6.5.1 https
 
 **Arguments**
 
@@ -2691,7 +2716,7 @@ Required
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/SetRobotVariable/{tmRobotName}/{projectName}/{variableName}/{value}`
+URL Path: `/HttpServerRobot/SetRobotVariable/{tmRobotName}/{projectName}/{variableName}/{value}`
 
 Method: `Post`
 
@@ -2703,7 +2728,7 @@ Authorization: Bearer {token}
 ```
 
 
-#### Socket(s)
+#### 6.5.2 sockets
 
 **Arguments**
 
@@ -2751,7 +2776,7 @@ Authorization: Bearer {token}
   }
 }
 ```
-#### gRPC
+#### 6.5.3 grpc
 
 **Arguments**
 
@@ -2764,7 +2789,7 @@ Authorization: Bearer {token}
 
 **Request**
 
-Url:/GrpcServerRobot/SetRobotVariable
+Function Name: /GrpcServerRobot/SetRobotVariable
 
 ```json
 {
@@ -2787,7 +2812,7 @@ Url:/GrpcServerRobot/SetRobotVariable
 ```
 ### 6.6 Pull TM Robot Project into API Host
 
-Default TM Robot project will be download to the folder:  `apiserver/Files/(TMRobotName)`, the name of the Files (default) folder can be changed in the Settings.json configuration.
+Default TM Robot project will be download to the folder:  `apiserver/Files/`, 一個專案名稱只會保留一份檔案, the name of the Files (default) folder can be changed in the Settings.json configuration.
 
 Required
 
@@ -2795,7 +2820,7 @@ Required
 - TM Robot must be in `Manual mode`.
 - TM Robot must be stopped.
 
-#### Http(s)
+#### 6.6.1 https
 
 **Arguments**
 
@@ -2806,7 +2831,7 @@ Required
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/pullproject/{TMRobotName}/{projectName}`
+URL Path: `/HttpServerRobot/pullproject/{TMRobotName}/{projectName}`
 
 Method: `Post`
 
@@ -2828,7 +2853,7 @@ Authorization: Bearer {token}
 }
 ```
 
-#### Socket(s)
+#### 6.6.2 sockets
 
 **Arguments**
 
@@ -2872,7 +2897,7 @@ Authorization: Bearer {token}
   }
 }
 ```
-#### gRPC
+#### 6.6.3 grpc
 
 **Arguments**
 
@@ -2883,7 +2908,7 @@ Authorization: Bearer {token}
 
 **Request**
 
-Url:/GrpcServerRobot/pullproject
+Function Name: /GrpcServerRobot/pullproject
 
 ```json
 {
@@ -2910,7 +2935,7 @@ Required
 
 - TM Robot project must be downloaded to the API host first.
 
-#### Http(s)
+#### 6.7.1 https
 
 **Arguments**
 
@@ -2921,7 +2946,7 @@ Required
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/DownloadProject/{TMRobotName}/{projectName}`
+URL Path: `/HttpServerRobot/DownloadProject/{TMRobotName}/{projectName}`
 
 Method: `Post`
 
@@ -2936,7 +2961,7 @@ Authorization: Bearer {token}
 
 TM Robot project `.zip`  file.
 
-#### Socket(s)
+#### 6.7.2 sockets
 
 **Arguments**
 
@@ -2970,7 +2995,7 @@ TM Robot project `.zip`  file.
 }
 ```
 
-#### gRPC
+#### 6.7.3 grpc
 
 **Arguments**
 
@@ -2981,7 +3006,7 @@ TM Robot project `.zip`  file.
 
 **Request**
 
-Url:/GrpcServerRobot/DownloadProject
+Function Name: /GrpcServerRobot/DownloadProject
 
 ```json
 {
@@ -3009,7 +3034,7 @@ Required
 
 - Only the project owned by the API server host can be uploaded.
 
-#### Http(s)
+#### 6.8.1 https
 
 **Arguments**
 
@@ -3020,7 +3045,7 @@ Required
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/pushproject/{TMRobotName}/{projectName}`
+URL Path: `/HttpServerRobot/pushproject/{TMRobotName}/{projectName}`
 
 Method: `Post`
 
@@ -3042,7 +3067,7 @@ Authorization: Bearer {token}
 }
 ```
 
-#### Socket(s)
+#### 6.8.2 sockets
 
 **Arguments**
 
@@ -3085,7 +3110,7 @@ Authorization: Bearer {token}
   }
 }
 ```
-#### gRPC
+#### 6.8.3 grpc
 
 **Arguments**
 
@@ -3096,7 +3121,7 @@ Authorization: Bearer {token}
 
 **Request**
 
-Url:/GrpcServerRobot/pushproject
+Function Name: /GrpcServerRobot/pushproject
 
 ```json
 {
@@ -3116,7 +3141,7 @@ Url:/GrpcServerRobot/pushproject
 }
 ```
 ### 6.9 Upload TM Robot Project to API Host
-#### Http(s)
+#### 6.9.1 https
 
 **Arguments**
 
@@ -3127,7 +3152,7 @@ Url:/GrpcServerRobot/pushproject
 
 **Request**
 
-Url: `http://{server_ip}:9832/HttpServerRobot/UploadProject/{TMRobotName}/{projectName}`
+URL Path: `/HttpServerRobot/UploadProject/{TMRobotName}/{projectName}`
 
 Method: `Post`
 
@@ -3143,7 +3168,7 @@ Content: FileStream content
 **Response**
 
 HttpStatus 200
-#### Socket(s)
+#### 6.9.2 sockets
 
 **Arguments**
 
@@ -3168,7 +3193,7 @@ HttpStatus 200
   }
 }
 ```
-#### gRPC
+#### 6.9.3 grpc
 
 **Arguments**
 
@@ -3179,7 +3204,7 @@ HttpStatus 200
 
 **Request**
 
-Url:/GrpcServerRobot/UploadProject
+Function Name: /GrpcServerRobot/UploadProject
 
 ```json
 [
@@ -3200,7 +3225,127 @@ Url:/GrpcServerRobot/UploadProject
 }
 ```
 
-## Appendix
+### 6.10 Send TM Robot ListenNode Command
+
+#### 6.10.1 https
+
+**Arguments**
+
+| Name                        | Required | Data Type   | Description               |
+| --------------------------- | -------- | ----------- | ------------------------- |
+| TMRobotName                 | Yes      | string      | TM Robot name             |
+| ListenNodeParameters        | Yes      | object list | listennode parameter list |
+| ListenNodeParameters.Header | Yes      | string      | listennode header         |
+| ListenNodeParameters.Data   | Yes      | string      | listennode data           |
+
+**Request**
+
+URL Path: `/HttpServerRobot/SendListenNodeString/{TMRobotName}`
+
+Method: `Post`
+
+Headers
+
+```http
+Content-Type: application/zip
+Authorization: Bearer {token}
+```
+
+Content: 
+
+```json
+[{"Header":"Test","Data":"123"}]
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "message": ""
+}
+```
+
+#### 6.10.2 Sockets
+
+**Arguments**
+
+| Name                   | Required | Data Type   | Description                                                  |
+| ---------------------- | -------- | ----------- | ------------------------------------------------------------ |
+| Token                  | Yes      | string      | API access token                                             |
+| ActionTarget           | Yes      | int         | Socket command target in effect. Use `1` for the  target as the Robot. |
+| TMRobotActionParameter |          | object      |                                                              |
+| RobotActionType        | Yes      | int         | Robot action type ID. The method brings in the  value `24`.  |
+| TMRobotName            | Yes      | string      | TM Robot name                                                |
+| ListenNodeParameters   | Yes      | object list | listennode parameter list                                    |
+|                        |          |             |                                                              |
+| ListenNodeParameters.Header | Yes      | string      | listennode header         |
+| ListenNodeParameters.Data   | Yes      | string      | listennode data           |
+
+**Request**
+
+```json
+{
+   "Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZG1pbiIsImp0aSI6ImQ4NjBhYjMzLTdmZTEtNDFmZi1iNDE1LTE3MTI4NzYxYzViYiIsInJvbGVzIjpbIkFkbWluIiwiVXNlcnMiXSwibmJmIjoxNjA1MDg5NzM5LCJleHAiOjE2MDUwOTMzMzksImlhdCI6MTYwNTA4OTczOSwiaXNzIjoiVE1NIn0.PL0LfipqGfbHP3Y_wucbXSrhUNL3VgJH4boWeeUrn6M",
+   "ActionTarget":1,
+   "TMRobotActionParameter":{
+      "RobotActionType":24,
+      "TMRobotName":"NEX613-20200518",
+      "ListenNodeParameters":[{"Header":"Test","Data":"123"}]
+   }
+}
+
+```
+
+**Response**
+
+```json
+{
+  "Success": true,
+  "Message": "",
+  "ActionTarget": 1,
+  "TMRobotActionReturn": {
+    "RobotActionType": 24,
+    "TMRobotSuccessfulModel": {
+        "Success": true,
+        "Message": "" 
+    }
+  }
+}
+```
+
+#### 6.10.3 gRPC
+
+**Arguments**
+
+| Name                        | Required | Data Type   | Description               |
+| --------------------------- | -------- | ----------- | ------------------------- |
+| TMRobotName                 | Yes      | string      | TM Robot name             |
+| ListenNodeParameters        | Yes      | object list | listennode parameter list |
+| ListenNodeParameters.Header | Yes      | string      | listennode header         |
+| ListenNodeParameters.Data   | Yes      | string      | listennode data           |
+
+**Request**
+
+Function Name: /GrpcServerRobot/SendListenNodeString
+
+```json
+{
+  "TMRobotName":"TM0000",
+  "ListenNodeParameters":[{"Header":"Test","Data":"123"}]
+}
+```
+
+**Reponse**
+
+```json
+{
+  "success":true,
+  "message":""    
+}
+```
+
+## Appendix A: Function parameter description
 
 ### Socket Response
 
@@ -3265,8 +3410,8 @@ Url:/GrpcServerRobot/UploadProject
 | -------------- | ------------ | -------------------- |
 | Name          | string       | TM Robot variable name |
 | ProjectName | string   | Project name |
-| IsGlobalVariable | bool | 是否為全域變數 |
-| IsSubscribed   | bool | 是否已訂閱   |
+| IsGlobalVariable | bool | Whether it is a global variable |
+| IsSubscribed   | bool | Subscribed |
 
 ### TMRobotVariableValue
 
@@ -3291,13 +3436,13 @@ Url:/GrpcServerRobot/UploadProject
 
 | Name           | Data Type    | Description                                                  |
 | -------------- | ------------ | ------------------------------------------------------------ |
-| ModbusFunction | int          | Modbus function code. Refer to Field  Specification.         |
+| ModbusFunction | int          | Modbus function code. Refer to Appendix B.                   |
 | ReadBools      | bool array   | ReadCoils or ReadInputs for reading multiple values  returned. |
 | ReadRegisters  | ushort array | ReadHoldingRegisters or ReadInputRegisters for  reading multiple values returned. |
 
 
 
-## Field Specification
+## Appendix B: Parameter code description
 
 ### ActionTarget
 
