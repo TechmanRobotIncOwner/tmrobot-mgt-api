@@ -98,7 +98,7 @@ Supported TM Robot software version: 1.72/1.76/1.80 and above
 | Column Name                  | Description                                                  |
 | ---------------------------- | ------------------------------------------------------------ |
 | ASPNETCORE_ENVIRONMENT       | Operating environment (fixed as Production)                  |
-| SERVICE_HOST_NAME            | Service host name or IP                                      |
+| SERVICE_HOST_NAME            | Service host name or IP as API URL                           |
 | SERVICE_SOCKETS_PORT         | Sockets listen port                                          |
 | SERVICE_HTTPS_PORT           | HTTPs listen port                                            |
 | SERVICE_GRPC_PORT            | GRPC listen port                                             |
@@ -149,7 +149,7 @@ The environment variables, field names and corresponding descriptions of TM Robo
 | MQSetting.TMRobotInfoDetailRoute | Rabbit MQ Server Routing Key TM Robot Detail Information |
 | USERINFO.UserName                | Robot API User Name (customize)                          |
 | USERINFO.Password                | Robot API User Password (customize)                      |
-| ApiService                       | API Service IP Address                                   |
+| ApiService                       | API Service IP Address for listening TMRobot             |
 
 #### 3.3.4 modbus-config.json
 
