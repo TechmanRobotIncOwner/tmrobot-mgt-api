@@ -84,7 +84,7 @@ Supported TM Robot software version: 1.72/1.76/1.80 and above
    - service-config.json, please refer to 3.3.3.
    - modbus-config.json, please refer to 3.3.4 for the field.
 
-3. Open the terminal and execute the command: `docker-compose up -d `under the unzipped TM Robot Management API folder.
+3. Execute _start.bat .
 
 4. Open the URL `https://{server_ip}:9833/HttpServer/TestRobotApiConnect`
 
